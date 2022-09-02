@@ -1,0 +1,40 @@
+# Config file for morphological and topological features extraction
+EXPERIMENT_NAME : "exp_t050"
+
+BASE_PATH : /home/pablo/code/aramis/graph_topology # path to the root of the folder/repo
+
+WSI_ID : "all" # set to "all" or a list containing the index of the WSIs to process
+
+MORPHOLOGICAL_PROPERTIES : ['centroid', 'area', 'perimeter','area_bbox', 'area_convex', 'axis_major_length', 'axis_minor_length', 'eccentricity', 'extent', 'solidity'] # check https://scikit-image.org/docs/stable/api/skimage.measure.html#skimage.measure.regionprops
+
+TOPOLOGICAL_PROPERTIES : []
+
+CENTROID_ID : False # Keep or not the centroid id in the csv files
+UNET_THRESHOLD : 0.95
+
+GRAPH:
+  dropout: 0 # randomly drops a fraction of centroids before computing the graph
+  weight: True # if set to True, the weight of the edge between two nodes is defined as 1/euclidean distance between two nodes. If False, weight is set to 1 for all edges
+
+
+VISUALIZATION_CENTROID :
+  active : True # to save the visualization plot or not
+  title : True # set title or not
+  figsize : 20 # figsize (square of size figsize)
+  size: 50 # size of the dots representing each centroid
+  dpi: 300 # dpi of the saved image
+
+VISUALIZATION_GRAPH :
+  active : True # to save the visualization plot or not
+  title : True # set title or not
+  figsize : 20 # figsize (square of size figsize)
+  dpi: 300 # dpi of the saved image
+  axis: False
+  options: 
+    font_size: 0
+    node_size: 25
+    node_color: 'blue'
+    edgecolors: black
+    linewidths: 1
+    width: 1
+
