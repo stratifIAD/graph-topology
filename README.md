@@ -1,5 +1,8 @@
 # Morphological and graph topological features extraction
 
+## NOTE
+This repository is public for review purposes of SPIE Medical Image 2022 conference. Any other use of the code without explicit permission from the authors is prohibited. For any questions contact Gabriel Jimenez at gabriel.jimenez@icm-institute.org
+
 ## Introduction
 
 This repository contains the code to extract morphological features from WSI, compute the associated Delaunay graph and extract topological features from it. The code is ready to use and user-friendly thanks to the **config.yml** file. 
