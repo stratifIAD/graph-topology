@@ -1,6 +1,10 @@
 # Folders
 __pycache__
 sandbox
+data_sample
 
 # Files
 *.python-version
+results/.DS_Store
+data/.DS_Store
+.DS_Store

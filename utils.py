@@ -7,6 +7,7 @@ from libpysal.cg import voronoi_frames
 from libpysal import weights, examples
 from scipy.spatial import distance
 import pandas as pd
+import pprint
 
 def get_config():
     with open('config.yml') as f:
@@ -37,6 +38,26 @@ def plot_graph(G, pos, wsi_name, save_path, options, figsize=10, title=True, dpi
         
     plt.savefig(os.path.join(save_path, f'{wsi_name}.png'), dpi=dpi)
     plt.close()
+
+def plot_graph_wsi(G, pos, divider, factor, wsi, wsi_name, gray_matter, extend_factor, save_path, options, figsize=10, title=True, dpi=300, axis=False, dropout=False, ):
+    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    fig.patch.set_facecolor('white')
+    options=options
+
+    ax.imshow(wsi, extent=[0,extend_factor[0]/divider[0],0,extend_factor[1]/divider[1]],origin='lower')
+    for coords in gray_matter:
+        ax.plot(coords[:,0]/factor/divider[0],coords[:,1]/factor/divider[1],'--b',linewidth=1.5)
+    nx.draw_networkx(G, pos, ax=ax, **options)
+
+    if title:
+        ax.set_title(f'{wsi_name}')
+    if title and dropout > 0: 
+        ax.set_title(f'{wsi_name} with dropout = {dropout}')
+    if not axis:    
+        ax.axis('off')
+
+    plt.savefig(os.path.join(save_path, f'{wsi_name}.png'), dpi=dpi)
+    plt.close()
     
 def compute_graph(df, weight):
     centroids = df[['centroid-0', 'centroid-1']].values
@@ -63,8 +84,76 @@ def compute_graph(df, weight):
             weighted_G.add_edge(*edges, 1)
 
     G = weighted_G.copy()
+
+    # Erode a graph
+    '''
+    eroded_G = nx.Graph()
+    for edge in G.edges(data=True):
+        print(edge)
+        if (edge[2]['weight'] > 1e-3):
+            eroded_G.add_edge(edge[0], edge[1], distance=edge[2]['weight'])
     
+    adj_matrix = nx.to_numpy_matrix(G)
+    eroded_graph = np.copy(adj_matrix)
+    num_nodes = adj_matrix.shape[0]
+
+    for i in range(num_nodes):
+        for j in range(num_nodes):
+            aux = adj_matrix[i, j]
+            if (aux < 1e-3):
+                eroded_graph[i, j] = 0
+            else:
+                eroded_graph[i, j] = aux
+
+    eroded_graph_G = nx.from_numpy_matrix(eroded_graph)
+
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(nx.to_numpy_array(G).shape)
+    pp.pprint(nx.to_numpy_array(G))
+    pp.pprint(nx.to_numpy_array(eroded_graph_G).shape)
+    pp.pprint(nx.to_numpy_array(eroded_graph_G))
+
+    counts, bins = np.histogram(adj_matrix)
+    plt.figure(1)
+    plt.stairs(counts, bins)
+    # plt.show()
+
+    counts, bins = np.histogram(eroded_graph)
+    plt.figure(2)
+    plt.stairs(counts, bins)
+    plt.show()
+    '''
+    # return eroded_G, pos
     return G, pos
+
+def compute_graph_slidelvl(df, weight, factor):
+    centroids = df[['centroid-0', 'centroid-1']].values
+    points = [(float(x[0])/factor, float(x[1])/factor) for x in centroids]
+    points_array = np.array(points)
+    x_max = points_array[:, 0].max()
+    y_max = points_array[:, 1].max()
+    divider = np.array([x_max, y_max])
+    points = [(float(x[0]), float(x[1])) for x in points_array / divider]
+    pos = {i: point for i, point in enumerate(points)}
+    cells, generators = voronoi_frames(points)
+    
+    delaunay = weights.Rook.from_dataframe(cells)
+    G = delaunay.to_networkx()
+
+    weighted_G = nx.Graph()
+    weighted_G.add_nodes_from(G.nodes())
+    
+    if weight:
+        for edges in G.edges():
+            weighted_G.add_edge(*edges, weight=1/distance.euclidean(centroids[edges[0]], centroids[edges[1]]))
+    else:
+        for edges in G.edges():
+            weighted_G.add_edge(*edges, 1)
+
+    G = weighted_G.copy()
+    
+    return G, pos, divider
+
 
 def extract_graph_topology(G):
     

@@ -1,7 +1,7 @@
 # Config file for morphological and topological features extraction
-EXPERIMENT_NAME : "exp_t050"
+EXPERIMENT_NAME : "exp_SPIE_2023"
 
-BASE_PATH : /home/pablo/code/aramis/graph_topology # path to the root of the folder/repo
+BASE_PATH : /Users/gabriel.jimenez/Documents/phd/github-repos/graph_topology # path to the root of the folder/repo
 
 WSI_ID : "all" # set to "all" or a list containing the index of the WSIs to process
 
@@ -15,7 +15,8 @@ UNET_THRESHOLD : 0.95
 GRAPH:
   dropout: 0 # randomly drops a fraction of centroids before computing the graph
   weight: True # if set to True, the weight of the edge between two nodes is defined as 1/euclidean distance between two nodes. If False, weight is set to 1 for all edges
-
+  erosion: True
+  erosion_threshold: 0.9
 
 VISUALIZATION_CENTROID :
   active : True # to save the visualization plot or not
@@ -27,14 +28,14 @@ VISUALIZATION_CENTROID :
 VISUALIZATION_GRAPH :
   active : True # to save the visualization plot or not
   title : True # set title or not
-  figsize : 20 # figsize (square of size figsize)
+  figsize : 10 # figsize (square of size figsize)
   dpi: 300 # dpi of the saved image
   axis: False
   options: 
     font_size: 0
-    node_size: 25
-    node_color: 'blue'
+    node_size: 20
+    node_color: 'green'
     edgecolors: black
-    linewidths: 1
+    linewidths: 2
     width: 1
 
