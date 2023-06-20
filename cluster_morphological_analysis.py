@@ -46,12 +46,20 @@ if __name__ == "__main__":
             results[column] = (np.log(results[column] / results[column].min())) / (np.log(results[column].max() / (results[column].min() + eps)))
 
         X.append(results.loc[:,features].mean().to_numpy())
+        print(np.shape(results.loc[:,features].mean().to_numpy()))
     
+    print(np.shape(X))
     X = np.asarray(X)
-    # print(X.shape)
+    print(X.shape)
+    print(X)
     
     pca = PCA(n_components=2)
     X_pca = pca.fit(X.T)
+    print(X_pca)
+    print(X_pca.components_)
+    print(np.expand_dims(X_pca.components_[0],axis=1).shape)
+
+    '''
     explained_variance = np.sum(pca.explained_variance_ratio_[:2]) * 100
     print(f"The first two principal components explain the {explained_variance:.2f}% of the total variance.")
 
@@ -114,5 +122,5 @@ if __name__ == "__main__":
     plt.close()
 
     cluster_map.to_csv(os.path.join(EXPERIMENT_PATH, 'morphological_cluster.csv'))
-
+'''
 
